@@ -1,6 +1,7 @@
 use std::f32::consts::PI;
 
 use bevy::math::{vec2, vec3};
+use bevy::ui::update;
 use bevy::{prelude::*, transform};
 use bevy::time::Stopwatch;
 use bevy::window::{close_on_esc, PrimaryWindow};
@@ -23,6 +24,7 @@ const PLAYER_SPEED: f32 = 2.0;
 
 //Gun
 const BULLET_SPAWN_INTERVAL: f32 = 0.1;
+const BULLET_SPEED: f32 = 10.0;
 //Resources
 #[derive(Resource)]
 struct GlobalTextureAtlasHandle(Option<Handle<TextureAtlasLayout>>);
@@ -50,6 +52,8 @@ struct Gun;
 struct Bullet;
 #[derive(Component)]
 struct GunTimer(pub Stopwatch);
+#[derive(Component)]
+struct BulletDirection(Vec3);
 
 fn main() {
     App::new()
@@ -85,6 +89,7 @@ fn main() {
                 update_gun_transform,
                 update_cursor_position,
                 handle_gun_input,
+                update_bullets,
             )
                 .run_if(in_state(GameState::InGame)),
         )
@@ -183,8 +188,10 @@ fn handle_player_input(
         delta.x += 1.0;
     }
 
-    if delta.is_finite() && (w_key || s_key || a_key || d_key) {
-        player_transform.translation += vec3(delta.x, delta.y, 0.) * PLAYER_SPEED;
+    if delta.is_finite() 
+    && (delta.x.abs() > 0. || delta.y.abs() > 0.) 
+    && (w_key || s_key || a_key || d_key) {
+        player_transform.translation += vec3(delta.x, delta.y, 0.).normalize() * PLAYER_SPEED;
     }
 }
 
@@ -235,6 +242,19 @@ fn update_gun_transform(
     gun_transform.translation.z = 15.0;
 }
 
+fn update_bullets(
+    mut bullet_query: Query<(&mut Transform, &BulletDirection), With<Bullet>>,
+) {
+    if bullet_query.is_empty() {
+        return;
+    }
+
+    for (mut t, dir) in bullet_query.iter_mut() {
+        t.translation += dir.0.normalize() * Vec3::splat(BULLET_SPEED);
+        t.translation.z = 10.0;
+    }
+}
+
 fn handle_gun_input(
     mut commands: Commands,
     mut gun_query: Query<(&Transform, &mut GunTimer), With<Gun>>,
@@ -247,13 +267,15 @@ fn handle_gun_input(
         return;
     }
 
-    let (transform, mut gun_timer) = gun_query.single_mut();
-    let gun_pos = transform.translation.truncate();
+    let (gun_transform, mut gun_timer) = gun_query.single_mut();
+    let gun_pos = gun_transform.translation.truncate();
     gun_timer.0.tick(time.delta());
+
+    let bullet_direction = gun_transform.local_x();
 
     if gun_timer.0.elapsed_secs() >= BULLET_SPAWN_INTERVAL {
         gun_timer.0.reset();
-        
+
         commands.spawn((
             SpriteSheetBundle {
                 texture: image_handle.0.clone().unwrap(),
@@ -266,6 +288,7 @@ fn handle_gun_input(
                 ..default()
             },
             Bullet,
+            BulletDirection(*bullet_direction),
         ));
     }
 }
