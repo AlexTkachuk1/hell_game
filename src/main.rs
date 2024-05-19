@@ -5,6 +5,7 @@ use bevy::ui::update;
 use bevy::{prelude::*, transform};
 use bevy::time::Stopwatch;
 use bevy::window::{close_on_esc, PrimaryWindow};
+use bevy_pancam::{PanCam, PanCamPlugin};
 use rand::Rng;
 
 //Window
@@ -81,6 +82,8 @@ fn main() {
             BG_COLOR.0, BG_COLOR.1, BG_COLOR.2,
         )))
         .insert_resource(Msaa::Off)
+        //External Plugins
+        .add_plugins(PanCamPlugin::default())
         //Custom Resources
         .insert_resource(GlobalTextureAtlasHandle(None))
         .insert_resource(GlobalSpriteSheetHandle(None))
@@ -96,6 +99,7 @@ fn main() {
             Update,
             (
                 handle_player_input,
+                camera_follow_player,
                 update_gun_transform,
                 update_cursor_position,
                 handle_gun_input,
@@ -128,7 +132,8 @@ fn load_assets(
 }
 
 fn setup_camera(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default())
+        .insert(PanCam::default());
 }
 
 fn init_world(
@@ -190,6 +195,25 @@ fn spawn_world_decorrations(
             },
         ));
     }
+}
+
+fn camera_follow_player(
+    player_query: Query<&Transform, With<Player>>,
+    mut camera_query: Query<&mut Transform, (With<Camera>, Without<Player>)>,
+) {
+    if player_query.is_empty() || camera_query.is_empty() {
+        return;
+    }
+
+    let mut camera_transform = camera_query.single_mut();
+    let player_transform = player_query.single().translation;
+    let (x, y) = (player_transform.x, player_transform.y);
+
+
+    camera_transform.translation = camera_transform.translation.lerp(
+        Vec3::new(x, y, camera_transform.translation.z),
+        0.01,
+    );
 }
 
 fn handle_player_input(
