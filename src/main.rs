@@ -5,6 +5,7 @@ use bevy::ui::update;
 use bevy::{prelude::*, transform};
 use bevy::time::Stopwatch;
 use bevy::window::{close_on_esc, PrimaryWindow};
+use rand::Rng;
 
 //Window
 const WW: f32 = 1200.;
@@ -18,6 +19,11 @@ const TILE_H: usize = 16;
 const SPRITE_SHEET_W: usize = 4;
 const SPRITE_SHEET_H: usize = 4;
 const BG_COLOR: (u8, u8, u8) = (197, 204, 184);
+
+//World
+const NUM_DECORRATIONS: usize = 1000;
+const WORLD_W: f32 = 3000.0;
+const WORLD_H: f32 = 2500.0;
 
 //Player
 const PLAYER_SPEED: f32 = 2.0;
@@ -81,7 +87,11 @@ fn main() {
         .insert_resource(CursourPosition(None))
         //Systems
         .add_systems(OnEnter(GameState::Loading), load_assets)
-        .add_systems(OnEnter(GameState::GameInit), (setup_camera, init_world))
+        .add_systems(OnEnter(GameState::GameInit), (
+            setup_camera,
+            init_world,
+            spawn_world_decorrations,
+        ))
         .add_systems(
             Update,
             (
@@ -154,6 +164,32 @@ fn init_world(
     ));
 
     next_state.set(GameState::InGame);
+}
+
+fn spawn_world_decorrations(
+    mut commands: Commands,
+    texture_atlas: Res<GlobalTextureAtlasHandle>,
+    image_handle: Res<GlobalSpriteSheetHandle>,
+) {
+    let mut rng = rand::thread_rng();
+
+    for _ in 0..NUM_DECORRATIONS {
+        let x = rng.gen_range(-WORLD_W..WORLD_W);
+        let y = rng.gen_range(-WORLD_H..WORLD_H);
+
+        commands.spawn((
+            SpriteSheetBundle {
+                texture: image_handle.0.clone().unwrap(),
+                atlas: TextureAtlas {
+                    layout: texture_atlas.0.clone().unwrap(),
+                    index: rng.gen_range(12..=13),
+                },
+                transform: Transform::from_translation(vec3(x, y, -1.))
+                    .with_scale(Vec3::splat(SPRITE_SCALE_FACTOR)),
+                ..default()
+            },
+        ));
+    }
 }
 
 fn handle_player_input(
