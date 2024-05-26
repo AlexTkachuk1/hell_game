@@ -11,11 +11,15 @@ pub enum PlayerState {
     Idle,
     Run,
 }
+
+#[derive(Event)]
+pub struct PlayerEnemyCollisionEvent;
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
+        app.add_event::<PlayerEnemyCollisionEvent>().add_systems(
             Update,
             handle_player_input.run_if(in_state(GameState::InGame)),
         );

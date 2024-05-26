@@ -5,15 +5,23 @@ use animation::AnimationTimer;
 use bevy::math::vec3;
 use bevy::{prelude::*, time::common_conditions::on_timer};
 use rand::Rng;
+use world::GameEntity;
 use crate::player::Player;
 use crate::*;
 use crate::state::GameState;
 
-pub struct EnemyPlagin;
-
 #[derive(Component)]
-pub struct Enemy;
+pub struct Enemy {
+      pub health: f32,
+}
 
+impl Default for Enemy {
+      fn default() -> Self {
+          Self {
+              health: ENEMY_HEALTH,
+          }
+      }
+}
 
 #[derive(Component)]
 pub enum EnemyType {
@@ -42,13 +50,29 @@ impl EnemyType {
       }
 }
 
+pub struct EnemyPlagin;
+
 impl Plugin for EnemyPlagin {
       fn build(&self, app: &mut App) {
             app.add_systems(
                   Update,
                   (spawn_enemies
-                        .run_if(on_timer(Duration::from_secs_f32(ENEMY_SPAWN_INTERVAL))), update_enemy_transform)
+                        .run_if(on_timer(Duration::from_secs_f32(ENEMY_SPAWN_INTERVAL))),
+                        update_enemy_transform,
+                        despawn_dead_enemies)
                   .run_if(in_state(GameState::InGame)));
+      }
+}
+
+fn despawn_dead_enemies(mut commands: Commands, enemy_query: Query<(&Enemy, Entity), With<Enemy>>) {
+      if enemy_query.is_empty() {
+          return;
+      }
+  
+      for (enemy, entity) in enemy_query.iter() {
+          if enemy.health <= 0.0 {
+              commands.entity(entity).despawn();
+          }
       }
 }
 
@@ -96,9 +120,10 @@ fn spawn_enemies(
                 transform: Transform::from_translation(vec3(x, y, 1.)).with_scale(Vec3::splat(SPRITE_SCALE_FACTOR)),
                 ..default()
             },
-            Enemy,
+            Enemy::default(),
             enemy_type,
             AnimationTimer(Timer::from_seconds(0.08, TimerMode::Repeating)),
+            GameEntity,
       ));
     }
 }
@@ -114,5 +139,5 @@ fn get_random_position_around(pos: Vec2) -> (f32, f32) {
       let random_x = pos.x + offset_x;
       let random_y = pos.y + offset_y;
   
-      (random_x, random_y)
+      return (random_x, random_y);
   }
