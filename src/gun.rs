@@ -1,6 +1,5 @@
 use crate::*;
 use crate::{player::Player, state::GameState, CursorPosition};
-use bevy::log;
 use bevy::{
     math::{vec2, vec3},
     prelude::*,

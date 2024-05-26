@@ -1,5 +1,3 @@
-use bevy::ecs::entity;
-use bevy::utils::tracing::Instrument;
 use bevy::utils::Duration;
 
 use bevy::{prelude::*, time::common_conditions::on_timer};
@@ -44,12 +42,28 @@ impl Plugin for CollisionPlugin {
             Update,
             (
                 handle_enemy_bullet_collision,
-            //     handle_enemy_player_collision,
+                handle_enemy_player_collision,
                 update_enemy_kd_tree
                     .run_if(on_timer(Duration::from_secs_f32(KD_TREE_REFRESH_RATE))),
             )
                 .run_if(in_state(GameState::InGame)),
         );
+    }
+}
+
+fn handle_enemy_player_collision(
+    player_query: Query<&Transform, With<Player>>,
+    tree: Res<EnemyKdTree>,
+    mut ew: EventWriter<PlayerEnemyCollisionEvent>,
+) {
+    if player_query.is_empty() {
+        return;
+    }
+
+    let player_pos = player_query.single().translation;
+    let enemies = tree.0.within_radius(&[player_pos.x, player_pos.y], 40.0);
+    for _ in enemies.iter() {
+        ew.send(PlayerEnemyCollisionEvent);
     }
 }
 

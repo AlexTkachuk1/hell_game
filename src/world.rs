@@ -6,7 +6,7 @@ use self::{
 use crate::*;
 use animation::AnimationTimer;
 use bevy::{math::vec3, prelude::*, time::Stopwatch};
-use player::PlayerState;
+use player::{Health, PlayerState};
 use rand::Rng;
 
 #[derive(Component)]
@@ -39,6 +39,7 @@ fn init_world(
             ..default()
         },
         Player,
+        Health(PLAYER_HEALTH),
         PlayerState::default(),
         AnimationTimer(Timer::from_seconds(0.15, TimerMode::Repeating)),
         GameEntity,
