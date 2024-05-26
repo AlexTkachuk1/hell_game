@@ -4,6 +4,13 @@ use crate::*;
 
 #[derive(Component)]
 pub struct Player;
+
+#[derive(Component, Default)]
+pub enum PlayerState {
+    #[default]
+    Idle,
+    Run,
+}
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
@@ -16,13 +23,13 @@ impl Plugin for PlayerPlugin {
 }
 
 fn handle_player_input(
-    mut player_query: Query<&mut Transform, With<Player>>,
+    mut player_query: Query<(&mut Transform, &mut PlayerState), With<Player>>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
 ) {
     if player_query.is_empty() {
         return;
     }
-    let mut player_transform = player_query.single_mut();
+    let (mut transform, mut player_state) = player_query.single_mut();
 
     let w_key: bool =
         keyboard_input.pressed(KeyCode::KeyW) || keyboard_input.pressed(KeyCode::ArrowUp);
@@ -51,6 +58,9 @@ fn handle_player_input(
         && (delta.x.abs() > 0. || delta.y.abs() > 0.)
         && (w_key || s_key || a_key || d_key)
     {
-        player_transform.translation += vec3(delta.x, delta.y, 0.).normalize() * PLAYER_SPEED;
+        transform.translation += vec3(delta.x, delta.y, 0.).normalize() * PLAYER_SPEED;
+        *player_state = PlayerState::Run;
+    } else {
+        *player_state = PlayerState::Idle;
     }
 }

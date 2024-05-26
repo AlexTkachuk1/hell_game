@@ -96,7 +96,7 @@ fn handle_gun_input(
                 texture: handle.image.clone().unwrap(),
                 atlas: TextureAtlas {
                     layout: handle.layout.clone().unwrap(),
-                    index: 8,
+                    index: 16,
                   },
                 transform: Transform::from_translation(vec3(gun_pos.x, gun_pos.y, 1.0))
                     .with_scale(Vec3::splat(SPRITE_SCALE_FACTOR)),

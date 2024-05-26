@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::window::close_on_esc;
 
 use hell_game::enemy::EnemyPlagin;
+use hell_game::animation::AnimationPlugin;
 use hell_game::camera::FollowCameraPlugin;
 use hell_game::gun::GunPlugin;
 use hell_game::player::PlayerPlugin;
@@ -35,6 +36,7 @@ fn main() {
         .add_plugins(ResourcesPlugin)
         .add_plugins(WorldPlugin)
         .add_plugins(EnemyPlagin)
+        .add_plugins(AnimationPlugin)
         .insert_resource(Msaa::Off)
         .add_systems(Update, close_on_esc)
         .run();

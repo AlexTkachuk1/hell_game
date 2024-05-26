@@ -6,6 +6,7 @@ pub mod state;
 pub mod world;
 pub mod camera;
 pub mod enemy;
+pub mod animation;
 
 pub use constants::*;
 pub use resourses::*;

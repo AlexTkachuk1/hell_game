@@ -7,8 +7,8 @@ pub const SPRITE_SHEET_PATH: &str = "assets.png";
 pub const SPRITE_SCALE_FACTOR: f32 = 3.0;
 pub const TILE_W: usize = 16;
 pub const TILE_H: usize = 16;
-pub const SPRITE_SHEET_W: usize = 4;
-pub const SPRITE_SHEET_H: usize = 4;
+pub const SPRITE_SHEET_W: usize = 8;
+pub const SPRITE_SHEET_H: usize = 8;
 pub const BG_COLOR: (u8, u8, u8) = (197, 204, 184);
 
 //World

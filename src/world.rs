@@ -4,7 +4,9 @@ use self::{
     state::GameState,
 };
 use crate::*;
+use animation::AnimationTimer;
 use bevy::{math::vec3, prelude::*, time::Stopwatch};
+use player::PlayerState;
 use rand::Rng;
 
 pub struct WorldPlugin;
@@ -34,13 +36,15 @@ fn init_world(
             ..default()
         },
         Player,
+        PlayerState::default(),
+        AnimationTimer(Timer::from_seconds(0.15, TimerMode::Repeating)),
     ));
     commands.spawn((
         SpriteSheetBundle {
             texture: handle.image.clone().unwrap(),
             atlas: TextureAtlas {
                 layout: handle.layout.clone().unwrap(),
-                index: 9,
+                index: 17,
             },
             transform: Transform::from_scale(Vec3::splat(SPRITE_SCALE_FACTOR)),
             ..default()
@@ -63,7 +67,7 @@ fn spawn_world_decorrations(mut commands: Commands, handle: Res<GlobalTextureAtl
             texture: handle.image.clone().unwrap(),
             atlas: TextureAtlas {
                 layout: handle.layout.clone().unwrap(),
-                index: rng.gen_range(12..=13),
+                index: rng.gen_range(24..=25),
             },
             transform: Transform::from_translation(vec3(x, y, -1.))
                 .with_scale(Vec3::splat(SPRITE_SCALE_FACTOR)),
