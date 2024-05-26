@@ -99,7 +99,7 @@ fn spawn_enemies(
       enemy_query: Query<&Transform, (With<Enemy>, Without<Player>)>,
 ) {
     let num_enemies = enemy_query.iter().len();
-    let enemy_spawn_count = (MAX_NUM_ENEMIES - num_enemies).min(10);
+    let enemy_spawn_count = (MAX_NUM_ENEMIES - num_enemies).min(SPAWN_RATE_PER_SECOND);
 
     if enemy_spawn_count >= MAX_NUM_ENEMIES || player_query.is_empty() {
         return;

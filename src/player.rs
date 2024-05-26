@@ -50,7 +50,7 @@ fn handle_player_enemy_collision_events(
 
 fn handle_player_death(
     player_query: Query<&Health, With<Player>>,
-    // mut next_state: ResMut<NextState<GameState>>,
+    mut next_state: ResMut<NextState<GameState>>,
 ) {
     if player_query.is_empty() {
         return;
@@ -59,11 +59,8 @@ fn handle_player_death(
     let health = player_query.single();
 
     if health.0 <= 0.0 {
-        println!("Player health: {}", health.0);
+        next_state.set(GameState::MainMenu);
     }
-    // if health.0 <= 0.0 {
-    //     next_state.set(GameState::MainMenu);
-    // }
 }
 
 fn handle_player_input(

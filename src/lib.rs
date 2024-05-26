@@ -7,7 +7,8 @@ pub mod world;
 pub mod camera;
 pub mod enemy;
 pub mod animation;
-pub mod colllision;
+pub mod collision;
+pub mod gui;
 
 pub use constants::*;
 pub use resourses::*;
