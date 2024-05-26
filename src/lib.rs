@@ -5,6 +5,7 @@ pub mod gun;
 pub mod state;
 pub mod world;
 pub mod camera;
+pub mod enemy;
 
 pub use constants::*;
 pub use resourses::*;

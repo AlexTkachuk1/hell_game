@@ -12,12 +12,18 @@ pub const SPRITE_SHEET_H: usize = 4;
 pub const BG_COLOR: (u8, u8, u8) = (197, 204, 184);
 
 //World
-pub const NUM_DECORRATIONS: usize = 1000;
-pub const WORLD_W: f32 = 3000.0;
-pub const WORLD_H: f32 = 2500.0;
+pub const NUM_DECORRATIONS: usize = 3000;
+pub const WORLD_W: f32 = 7000.0;
+pub const WORLD_H: f32 = 7000.0;
 
 //Player
-pub const PLAYER_SPEED: f32 = 2.0;
+pub const PLAYER_SPEED: f32 = 4.0;
+
+//Enemy
+pub const MAX_NUM_ENEMIES: usize = 500;
+pub const ENEMY_SPAWN_INTERVAL: f32 = 1.0;
+pub const ENEMY_SPEED: f32 = 1.5;
+
 
 //Gun
 pub const BULLET_SPAWN_INTERVAL: f32 = 0.1;
