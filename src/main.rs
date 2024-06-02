@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::close_on_esc;
 
+use hell_game::gold::GoldPlugin;
 use hell_game::gui::GuiPlugin;
 use hell_game::collision::CollisionPlugin;
 use hell_game::enemy::EnemyPlagin;
@@ -41,6 +42,7 @@ fn main() {
         .add_plugins(AnimationPlugin)
         .add_plugins(CollisionPlugin)
         .add_plugins(GuiPlugin)
+        .add_plugins(GoldPlugin)
         .insert_resource(Msaa::Off)
         .add_systems(Update, close_on_esc)
         .run();

@@ -3,12 +3,16 @@ use bevy::diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin};
 use bevy::prelude::*;
 
 use crate::enemy::Enemy;
-use crate::player::{Health, Player};
+use crate::player::{GoldCount, Health, Player};
 use crate::state::GameState;
 use crate::world::GameEntity;
+use crate::GlobalTextureAtlas;
 
 #[derive(Component)]
 struct DebugText;
+
+#[derive(Component)]
+struct CoinText;
 
 #[derive(Component)]
 struct MainMenuItem;
@@ -23,8 +27,12 @@ impl Plugin for GuiPlugin {
                 Update,
                 handle_main_menu_buttons.run_if(in_state(GameState::MainMenu)),
             )
-            .add_systems(OnEnter(GameState::InGame),spawn_debug_text)
-            .add_systems(Update, update_debug_text.run_if(in_state(GameState::InGame)));
+            .add_systems(OnEnter(GameState::InGame),(spawn_debug_text, spawn_res_ui))
+            .add_systems(Update,
+                (
+                    update_debug_text,
+                    update_res_text,
+                ).run_if(in_state(GameState::InGame)));
       }
 }
 
@@ -76,6 +84,72 @@ fn spawn_debug_text(mut commands: Commands, asset_server: Res<AssetServer>) {
                   });
           });
   }
+
+  fn spawn_res_ui(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    handle: Res<GlobalTextureAtlas>,
+    ) {
+    commands
+        .spawn((
+            NodeBundle {
+                style: Style {
+                    width: Val::Percent(100.0),
+                    height: Val::Percent(100.0),
+                    align_items: AlignItems::End,
+                    justify_content: JustifyContent::SpaceBetween,
+                    flex_direction: FlexDirection::Row,
+                    ..default()
+                },
+                ..default()
+            }, 
+            GameEntity,
+        ))
+        .with_children(|parent| {
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        width: Val::Px(1200.),
+                        height: Val::Px(50.0),
+                        align_items: AlignItems::Center,
+                        flex_direction: FlexDirection::Row,
+                        justify_content: JustifyContent::Center,
+                        padding: UiRect::all(Val::Px(8.0)),
+                        margin: UiRect::px(10.0, 10.0, 10.0, 10.0),
+                        ..default()
+                    },
+                    background_color: BackgroundColor::from(Color::BLACK.with_a(0.9)),
+                    ..default()
+                })
+                .with_children(|parent| {
+                    parent.spawn(AtlasImageBundle {
+                        style: Style {
+                            width: Val::Px(40.),
+                            height: Val::Px(40.),
+                            ..default()
+                        },
+                        texture_atlas: TextureAtlas {
+                            layout: handle.coin_layout.clone().unwrap(),
+                            index: 0,
+                        },
+                        image: UiImage::new(handle.coin_image.clone().unwrap()),
+                        ..default()
+                    });
+                    parent.spawn((
+                        TextBundle::from_section(
+                            ": 0",
+                            TextStyle {
+                                font: asset_server.load("monogram.ttf"),
+                                font_size: 40.0,
+                                color: Color::WHITE,
+                                ..default()
+                            },
+                        ),
+                        CoinText,
+                    ));
+                });
+        });
+} 
   
   fn update_debug_text(
       mut query: Query<&mut Text, With<DebugText>>,
@@ -97,6 +171,21 @@ fn spawn_debug_text(mut commands: Commands, asset_server: Res<AssetServer>) {
           }
       }
   }
+
+  fn update_res_text(
+    mut query: Query<&mut Text, With<CoinText>>,
+    player_query: Query<&GoldCount, With<Player>>,
+    ) {
+        if query.is_empty() || player_query.is_empty() {
+            return;
+        }
+
+        let player_gold = player_query.single().0;
+        let mut text = query.single_mut();
+
+        text.sections[0].value =
+            format!(": {player_gold}");
+    }
 
   fn setup_main_menu(mut commands: Commands) {
       commands

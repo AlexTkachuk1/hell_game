@@ -1,6 +1,7 @@
 use bevy::utils::Duration;
 
 use bevy::{prelude::*, time::common_conditions::on_timer};
+use gold::{Gold, PlayerGoldCollisionEvent};
 use kd_tree::{KdPoint, KdTree};
 
 use crate::player::{Player, PlayerEnemyCollisionEvent};
@@ -36,14 +37,29 @@ impl Default for EnemyKdTree {
       }
 }
 
+#[derive(Resource)]
+struct GoldKdTree(KdTree<Collidable>);
+
+impl Default for GoldKdTree {
+      fn default() -> Self {
+          Self(KdTree::build_by_ordered_float(vec![]))
+      }
+}
+
 impl Plugin for CollisionPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(EnemyKdTree::default()).add_systems(
+        app.insert_resource(EnemyKdTree::default())
+            .insert_resource(GoldKdTree::default())
+            .add_systems(
             Update,
             (
                 handle_enemy_bullet_collision,
-                handle_enemy_player_collision,
-                update_enemy_kd_tree
+                (
+                    update_enemy_kd_tree,
+                    update_gold_kd_tree,
+                    handle_gold_player_collision,
+                    handle_enemy_player_collision
+                )
                     .run_if(on_timer(Duration::from_secs_f32(KD_TREE_REFRESH_RATE))),
             )
                 .run_if(in_state(GameState::InGame)),
@@ -67,12 +83,51 @@ fn handle_enemy_player_collision(
     }
 }
 
+fn handle_gold_player_collision(
+    mut commands: Commands,
+    player_query: Query<&Transform, With<Player>>,
+    tree: Res<GoldKdTree>,
+    mut ew: EventWriter<PlayerGoldCollisionEvent>,
+    mut gold_query: Query<(&Transform, Entity), With<Gold>>,
+) {
+    if player_query.is_empty() {
+        return;
+    }
+
+    let player_pos = player_query.single().translation;
+    let gold = tree.0.within_radius(&[player_pos.x, player_pos.y], 60.0);
+
+    for e in gold.iter() {
+        if let Ok((_, entity)) = gold_query.get_mut(e.entity) {
+
+            commands.entity(entity).despawn();
+            ew.send(PlayerGoldCollisionEvent);
+        }
+
+    }
+}
+
 fn update_enemy_kd_tree(
     mut tree: ResMut<EnemyKdTree>,
     enemy_query: Query<(&Transform, Entity), With<Enemy>>,
 ) {
     let mut items = Vec::new();
     for (t, e) in enemy_query.iter() {
+        items.push(Collidable {
+            entity: e,
+            pos: t.translation.truncate(),
+        })
+    }
+
+    tree.0 = KdTree::build_by_ordered_float(items);
+}
+
+fn update_gold_kd_tree(
+    mut tree: ResMut<GoldKdTree>,
+    gold_query: Query<(&Transform, Entity), With<Gold>>,
+) {
+    let mut items = Vec::new();
+    for (t, e) in gold_query.iter() {
         items.push(Collidable {
             entity: e,
             pos: t.translation.truncate(),

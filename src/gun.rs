@@ -70,7 +70,7 @@ fn update_gun_transform(
     let offset = 20.0;
     let new_gun_pos = vec2(
         player_pos.x + offset * angle.cos() - 5.0,
-        player_pos.y + offset * angle.sin() - 10.0,
+        player_pos.y + offset * angle.sin() - 30.0,
     );
 
     gun_transform.translation = vec3(new_gun_pos.x, new_gun_pos.y, gun_transform.translation.z);

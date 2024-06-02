@@ -1,10 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    enemy::{Enemy, EnemyType},
-    gun::Gun,
-    player::{Player, PlayerState},
-    CursorPosition,
+    enemy::{Enemy, EnemyType}, gold::Gold, gun::Gun, player::{Player, PlayerState}, CursorPosition
 };
 use crate::state::GameState;
 
@@ -21,6 +18,7 @@ impl Plugin for AnimationPlugin {
                 animation_timer_tick,
                 animate_player,
                 animate_enemy,
+                animate_gold,
                 flip_gun_sprite_y,
                 flip_player_sprite_x,
                 flip_enemy_sprite_x,
@@ -50,9 +48,23 @@ fn animate_player(
     if timer.just_finished() {
         let base_sprite_index = match state {
             PlayerState::Idle => 0,
-            PlayerState::Run => 4,
+            PlayerState::Run => 12,
         };
-        atlas.index = base_sprite_index + (atlas.index + 1) % 4;
+        atlas.index = base_sprite_index + (atlas.index + 1) % 12;
+    }
+}
+
+fn animate_gold(
+    mut gold_query: Query<(&mut TextureAtlas, &AnimationTimer), With<Gold>>,
+) {
+    if gold_query.is_empty() {
+        return;
+    }
+
+    for (mut atlas, timer) in gold_query.iter_mut() {
+        if timer.just_finished() {
+            atlas.index = 0 + (atlas.index + 1) % 6;
+        }
     }
 }
 

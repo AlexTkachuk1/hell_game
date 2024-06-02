@@ -6,7 +6,7 @@ use self::{
 use crate::*;
 use animation::AnimationTimer;
 use bevy::{math::vec3, prelude::*, time::Stopwatch};
-use player::{Health, PlayerState};
+use player::{GoldCount, Health, PlayerState};
 use rand::Rng;
 
 #[derive(Component)]
@@ -30,28 +30,26 @@ fn init_world(
 ) {
     commands.spawn((
         SpriteSheetBundle {
-            texture: handle.image.clone().unwrap(),
+            texture: handle.player_image.clone().unwrap(),
             atlas: TextureAtlas {
-                layout: handle.layout.clone().unwrap(),
+                layout: handle.player_layout.clone().unwrap(),
                 index: 0,
             },
-            transform: Transform::from_scale(Vec3::splat(SPRITE_SCALE_FACTOR)),
+            transform: Transform::from_scale(Vec3::splat(PLAYER_SPRITE_SCALE_FACTOR)),
             ..default()
         },
         Player,
         Health(PLAYER_HEALTH),
+        GoldCount(0.),
         PlayerState::default(),
         AnimationTimer(Timer::from_seconds(0.15, TimerMode::Repeating)),
         GameEntity,
     ));
+
     commands.spawn((
         SpriteSheetBundle {
-            texture: handle.image.clone().unwrap(),
-            atlas: TextureAtlas {
-                layout: handle.layout.clone().unwrap(),
-                index: 17,
-            },
-            transform: Transform::from_scale(Vec3::splat(SPRITE_SCALE_FACTOR)),
+            texture: handle.gun_image.clone().unwrap(),
+            transform: Transform::from_scale(Vec3::splat(0.4)),
             ..default()
         },
         Gun,

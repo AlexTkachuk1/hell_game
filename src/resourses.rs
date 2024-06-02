@@ -10,6 +10,11 @@ pub struct ResourcesPlugin;
 pub struct GlobalTextureAtlas {
     pub layout: Option<Handle<TextureAtlasLayout>>,
     pub image: Option<Handle<Image>>,
+    pub player_layout: Option<Handle<TextureAtlasLayout>>,
+    pub player_image: Option<Handle<Image>>,
+    pub gun_image: Option<Handle<Image>>,
+    pub coin_layout: Option<Handle<TextureAtlasLayout>>,
+    pub coin_image: Option<Handle<Image>>,
 }
 #[derive(Resource)]
 pub struct CursorPosition(pub Option<Vec2>);
@@ -43,6 +48,30 @@ fn load_assets(
     );
     handle.layout = Some(texture_atlas_layouts.add(layout));
 
+    handle.player_image = Some(asset_server.load(PLAYER_SPRITE_SHEET_PATH));
+
+    let player_layout = TextureAtlasLayout::from_grid(
+        Vec2::new(PLAYER_TILE_W as f32, PLAYER_TILE_H as f32),
+        PLAYER_SPRITE_SHEET_W,
+        PLAYER_SPRITE_SHEET_H,
+        None,
+        None,
+    );
+    handle.player_layout = Some(texture_atlas_layouts.add(player_layout));
+
+    handle.gun_image = Some(asset_server.load(GUN_SPRITE_PATH));
+
+    handle.coin_image = Some(asset_server.load(COIN_SPRITE_SHEET_PATH));
+
+    let coin_layout = TextureAtlasLayout::from_grid(
+        Vec2::new(COIN_TILE_W as f32, COIN_TILE_H as f32),
+        COIN_SPRITE_SHEET_W,
+        COIN_SPRITE_SHEET_H,
+        None,
+        None,
+    );
+    handle.coin_layout = Some(texture_atlas_layouts.add(coin_layout));
+
     next_state.set(GameState::MainMenu);
 }
 
@@ -68,6 +97,11 @@ impl Default for GlobalTextureAtlas {
         Self {
             layout: None,
             image: None,
+            player_layout: None,
+            player_image: None,
+            gun_image: None,
+            coin_layout: None,
+            coin_image: None,
         }
     }
 }

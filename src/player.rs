@@ -18,11 +18,15 @@ pub struct PlayerEnemyCollisionEvent;
 #[derive(Component)]
 pub struct Health(pub f32);
 
+#[derive(Component)]
+pub struct GoldCount(pub f32);
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<PlayerEnemyCollisionEvent>().add_systems(
+        app.add_event::<PlayerEnemyCollisionEvent>()
+        .add_systems(
             Update,
             (
                 handle_player_death,

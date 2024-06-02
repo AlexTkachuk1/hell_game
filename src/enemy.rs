@@ -4,6 +4,7 @@ use std::time::Duration;
 use animation::AnimationTimer;
 use bevy::math::vec3;
 use bevy::{prelude::*, time::common_conditions::on_timer};
+use gold::Gold;
 use rand::Rng;
 use world::GameEntity;
 use crate::player::Player;
@@ -64,14 +65,34 @@ impl Plugin for EnemyPlagin {
       }
 }
 
-fn despawn_dead_enemies(mut commands: Commands, enemy_query: Query<(&Enemy, Entity), With<Enemy>>) {
+fn despawn_dead_enemies(
+    mut commands: Commands,
+    enemy_query: Query<(&Enemy, Entity, &Transform), With<Enemy>>,
+    handle: Res<GlobalTextureAtlas>,
+    ) {
       if enemy_query.is_empty() {
           return;
       }
   
-      for (enemy, entity) in enemy_query.iter() {
+      for (enemy, entity, transform) in enemy_query.iter() {
           if enemy.health <= 0.0 {
               commands.entity(entity).despawn();
+
+              commands.spawn((
+                SpriteSheetBundle {
+                    texture: handle.coin_image.clone().unwrap(),
+                    atlas: TextureAtlas {
+                        layout: handle.coin_layout.clone().unwrap(),
+                        index: 0,
+                    },
+                    transform: Transform::from_translation(vec3(transform.translation.x, transform.translation.y, -1.))
+                        .with_scale(Vec3::splat(COIN_SPRITE_SCALE_FACTOR)),
+                        ..default()
+                },
+                Gold,
+                AnimationTimer(Timer::from_seconds(0.08, TimerMode::Repeating)),
+                GameEntity,
+            ));
           }
       }
 }
