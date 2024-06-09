@@ -15,6 +15,14 @@ pub struct GlobalTextureAtlas {
     pub gun_image: Option<Handle<Image>>,
     pub coin_layout: Option<Handle<TextureAtlasLayout>>,
     pub coin_image: Option<Handle<Image>>,
+    pub menu_layout: Option<Handle<TextureAtlasLayout>>,
+    pub menu_image: Option<Handle<Image>>,
+    pub cursor_layout: Option<Handle<TextureAtlasLayout>>,
+    pub cursor_image: Option<Handle<Image>>,
+    pub button_layout: Option<Handle<TextureAtlasLayout>>,
+    pub button_image: Option<Handle<Image>>,
+    pub castle_layout: Option<Handle<TextureAtlasLayout>>,
+    pub castle_image: Option<Handle<Image>>,
 }
 #[derive(Resource)]
 pub struct CursorPosition(pub Option<Vec2>);
@@ -26,7 +34,7 @@ impl Plugin for ResourcesPlugin {
             .add_systems(OnEnter(GameState::Loading), load_assets)
             .add_systems(
                 Update,
-                update_cursor_position.run_if(in_state(GameState::InGame)),
+                update_cursor_position.run_if(in_state(GameState::InGame))
             );
     }
 }
@@ -72,6 +80,50 @@ fn load_assets(
     );
     handle.coin_layout = Some(texture_atlas_layouts.add(coin_layout));
 
+    handle.menu_image = Some(asset_server.load(MENU_SPRITE_SHEET_PATH));
+
+    let menu_layout = TextureAtlasLayout::from_grid(
+        Vec2::new(MENU_TILE_W as f32, MENU_TILE_H as f32),
+        MENU_SPRITE_SHEET_W,
+        MENU_SPRITE_SHEET_H,
+        None,
+        None,
+    );
+    handle.menu_layout = Some(texture_atlas_layouts.add(menu_layout));
+
+    handle.cursor_image = Some(asset_server.load(CURSOR_SPRITE_SHEET_PATH));
+
+    let cursor_layout = TextureAtlasLayout::from_grid(
+        Vec2::new(CURSOR_TILE_W as f32, CURSOR_TILE_H as f32),
+        CURSOR_SPRITE_SHEET_W,
+        CURSOR_SPRITE_SHEET_H,
+        None,
+        None,
+    );
+    handle.cursor_layout = Some(texture_atlas_layouts.add(cursor_layout));
+
+    handle.button_image = Some(asset_server.load(BUTTON_SPRITE_SHEET_PATH));
+
+    let button_layout = TextureAtlasLayout::from_grid(
+        Vec2::new(BUTTON_TILE_W as f32, BUTTON_TILE_H as f32),
+        BUTTON_SPRITE_SHEET_W,
+        BUTTON_SPRITE_SHEET_H,
+        None,
+        None,
+    );
+    handle.button_layout = Some(texture_atlas_layouts.add(button_layout));
+
+    handle.castle_image = Some(asset_server.load(CASTLE_SPRITE_SHEET_PATH));
+
+    let castle_layout = TextureAtlasLayout::from_grid(
+        Vec2::new(CASTLE_TILE_W as f32, CASTLE_TILE_H as f32),
+        CASTLE_SPRITE_SHEET_W,
+        CASTLE_SPRITE_SHEET_H,
+        None,
+        None,
+    );
+    handle.castle_layout = Some(texture_atlas_layouts.add(castle_layout));
+
     next_state.set(GameState::MainMenu);
 }
 
@@ -102,6 +154,14 @@ impl Default for GlobalTextureAtlas {
             gun_image: None,
             coin_layout: None,
             coin_image: None,
-        }
+            menu_layout: None,
+            menu_image: None,
+            cursor_image: None,
+            cursor_layout: None,
+            button_image: None,
+            button_layout: None,
+            castle_image: None,
+            castle_layout: None,
+        }   
     }
 }

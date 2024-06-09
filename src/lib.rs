@@ -10,6 +10,9 @@ pub mod animation;
 pub mod collision;
 pub mod gui;
 pub mod gold;
+pub mod pan_cam;
+pub mod cursor;
+pub mod castle;
 
 pub use constants::*;
 pub use resourses::*;

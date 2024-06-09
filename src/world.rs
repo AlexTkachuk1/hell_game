@@ -35,7 +35,8 @@ fn init_world(
                 layout: handle.player_layout.clone().unwrap(),
                 index: 0,
             },
-            transform: Transform::from_scale(Vec3::splat(PLAYER_SPRITE_SCALE_FACTOR)),
+            transform: Transform::from_scale(Vec3::splat(PLAYER_SPRITE_SCALE_FACTOR))
+                .with_translation(vec3(200., 0., 1.)),
             ..default()
         },
         Player,

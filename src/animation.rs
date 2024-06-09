@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    enemy::{Enemy, EnemyType}, gold::Gold, gun::Gun, player::{Player, PlayerState}, CursorPosition
+    castle::Castle, enemy::{Enemy, EnemyType}, gold::Gold, gui::MenuBG, gun::Gun, player::{Player, PlayerState}, CursorPosition
 };
 use crate::state::GameState;
 
@@ -12,13 +12,23 @@ pub struct AnimationTimer(pub Timer);
 
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
+        app
+        .add_systems(
+            Update,
+            (
+                animation_timer_tick,
+                animate_menu_bg
+            )
+            .run_if(in_state(GameState::MainMenu)),
+        )
+        .add_systems(
             Update,
             (
                 animation_timer_tick,
                 animate_player,
                 animate_enemy,
                 animate_gold,
+                animate_castle,
                 flip_gun_sprite_y,
                 flip_player_sprite_x,
                 flip_enemy_sprite_x,
@@ -34,6 +44,20 @@ fn animation_timer_tick(
 ) {
     for mut timer in query.iter_mut() {
         timer.tick(time.delta());
+    }
+}
+
+fn animate_menu_bg(
+    mut menu_query: Query<(&mut TextureAtlas, &AnimationTimer), With<MenuBG>>,
+) {
+    if menu_query.is_empty() {
+        return;
+    }
+
+    let (mut atlas, timer) = menu_query.single_mut();
+
+    if timer.just_finished() {
+        atlas.index = (atlas.index + 1) % 250;
     }
 }
 
@@ -64,6 +88,20 @@ fn animate_gold(
     for (mut atlas, timer) in gold_query.iter_mut() {
         if timer.just_finished() {
             atlas.index = 0 + (atlas.index + 1) % 6;
+        }
+    }
+}
+
+fn animate_castle(
+    mut castle_query: Query<(&mut TextureAtlas, &AnimationTimer), With<Castle>>,
+) {
+    if castle_query.is_empty() {
+        return;
+    }
+
+    for (mut atlas, timer) in castle_query.iter_mut() {
+        if timer.just_finished() {
+            atlas.index = (atlas.index + 1) % 28;
         }
     }
 }

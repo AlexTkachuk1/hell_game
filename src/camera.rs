@@ -1,6 +1,6 @@
 use bevy::{math::vec3, prelude::*};
-use bevy_pancam::{PanCam, PanCamPlugin};
 
+use crate::pan_cam::{PanCam, PanCamPlugin};
 use crate::player::Player;
 use crate::state::GameState;
 
@@ -30,6 +30,8 @@ fn setup_camera(mut commands: Commands) {
         ..default()
     });
 }
+
+
 
 fn camera_follow_player(
     player_query: Query<&Transform, With<Player>>,

@@ -1,5 +1,5 @@
 //Window
-pub const WW: f32 = 1200.;
+pub const WW: f32 = 1600.;
 pub const WH: f32 = 900.;
 
 //Assets
@@ -49,8 +49,41 @@ pub const KD_TREE_REFRESH_RATE: f32 = 0.1;
 
 //Gun
 pub const BULLET_SPAWN_INTERVAL: f32 = 0.1;
-pub const BULLET_SPEED: f32 = 10.0;
+pub const BULLET_SPEED: f32 = 20.0;
 pub const BULLET_DAMAGE: f32 = 15.0;
 pub const BULLET_TIME_SECS: f32 = 1.;
 
 pub const NUM_BULLETS_PER_SHOT: usize = 10;
+
+//Menu
+pub const MENU_SPRITE_SHEET_PATH: &str = "bg.png";
+pub const MENU_SPRITE_SCALE_FACTOR: f32 = 3.0;
+pub const MENU_TILE_W: usize = 800;
+pub const MENU_TILE_H: usize = 450;
+pub const MENU_SPRITE_SHEET_W: usize = 12;
+pub const MENU_SPRITE_SHEET_H: usize = 21;
+
+//Cursor
+pub const CURSOR_SPRITE_SHEET_PATH: &str = "cursor.png";
+pub const CURSOR_SPRITE_SCALE_FACTOR: f32 = 1.;
+pub const CURSOR_TILE_W: usize = 112;
+pub const CURSOR_TILE_H: usize = 112;
+pub const CURSOR_SPRITE_SHEET_W: usize = 4;
+pub const CURSOR_SPRITE_SHEET_H: usize = 1;
+
+//Buttons
+pub const BUTTON_SPRITE_SHEET_PATH: &str = "buttons.png";
+pub const BUTTON_SPRITE_SCALE_FACTOR: f32 = 1.;
+pub const BUTTON_TILE_W: usize = 164;
+pub const BUTTON_TILE_H: usize = 41;
+pub const BUTTON_SPRITE_SHEET_W: usize = 3;
+pub const BUTTON_SPRITE_SHEET_H: usize = 1;
+
+//Castle
+pub const CASTLE_SPRITE_SHEET_PATH: &str = "castle.png";
+pub const CASTLE_SPRITE_SCALE_FACTOR: f32 = 1.;
+pub const CASTLE_TILE_W: usize = 300;
+pub const CASTLE_TILE_H: usize = 300;
+pub const CASTLE_SPRITE_SHEET_W: usize = 6;
+pub const CASTLE_SPRITE_SHEET_H: usize = 5;
+pub const CASTLE_HEALTH: f32 = 1000.0;

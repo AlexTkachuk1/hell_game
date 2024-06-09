@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use bevy::window::close_on_esc;
 
+use hell_game::castle::CastlePlugin;
+use hell_game::cursor::CursorPlugin;
 use hell_game::gold::GoldPlugin;
 use hell_game::gui::GuiPlugin;
 use hell_game::collision::CollisionPlugin;
@@ -22,7 +24,7 @@ fn main() {
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         // mode: bevy::window::WindowMode::Fullscreen,
-                        resizable: true,
+                        resizable: false,
                         focused: true,
                         resolution: (WW, WH).into(),
                         ..default()
@@ -36,12 +38,14 @@ fn main() {
         .add_plugins(FollowCameraPlugin)
         .add_plugins(GunPlugin)
         .add_plugins(PlayerPlugin)
+        .add_plugins(CastlePlugin)
         .add_plugins(ResourcesPlugin)
         .add_plugins(WorldPlugin)
         .add_plugins(EnemyPlagin)
+        .add_plugins(CursorPlugin)
+        .add_plugins(GuiPlugin)
         .add_plugins(AnimationPlugin)
         .add_plugins(CollisionPlugin)
-        .add_plugins(GuiPlugin)
         .add_plugins(GoldPlugin)
         .insert_resource(Msaa::Off)
         .add_systems(Update, close_on_esc)

@@ -1,6 +1,7 @@
 use bevy::utils::Duration;
 
 use bevy::{prelude::*, time::common_conditions::on_timer};
+use castle::{Castle, CastleEnemyCollisionEvent};
 use gold::{Gold, PlayerGoldCollisionEvent};
 use kd_tree::{KdPoint, KdTree};
 
@@ -58,7 +59,8 @@ impl Plugin for CollisionPlugin {
                     update_enemy_kd_tree,
                     update_gold_kd_tree,
                     handle_gold_player_collision,
-                    handle_enemy_player_collision
+                    handle_enemy_player_collision,
+                    handle_enemy_castle_collision,
                 )
                     .run_if(on_timer(Duration::from_secs_f32(KD_TREE_REFRESH_RATE))),
             )
@@ -80,6 +82,22 @@ fn handle_enemy_player_collision(
     let enemies = tree.0.within_radius(&[player_pos.x, player_pos.y], 40.0);
     for _ in enemies.iter() {
         ew.send(PlayerEnemyCollisionEvent);
+    }
+}
+
+fn handle_enemy_castle_collision(
+    castle_query: Query<&Transform, With<Castle>>,
+    tree: Res<EnemyKdTree>,
+    mut ew: EventWriter<CastleEnemyCollisionEvent>,
+) {
+    if castle_query.is_empty() {
+        return;
+    }
+
+    let castle_pos = castle_query.single().translation;
+    let enemies = tree.0.within_radius(&[castle_pos.x, castle_pos.y], 150.0);
+    for _ in enemies.iter() {
+        ew.send(CastleEnemyCollisionEvent);
     }
 }
 
