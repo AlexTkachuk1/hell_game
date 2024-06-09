@@ -3,7 +3,9 @@ use crate::state::GameState;
 use crate::*;
 
 #[derive(Component)]
-pub struct Player;
+pub struct Player {
+    pub attacks: bool,
+}
 
 #[derive(Component, Default)]
 pub enum PlayerState {

@@ -94,8 +94,20 @@ fn handle_gun_input(
     time: Res<Time>,
     handle: Res<GlobalTextureAtlas>,
     mouse_button_input: Res<ButtonInput<MouseButton>>,
+    mut player_query: Query<&mut Player, With<Player>>,
 ) {
+    if player_query.is_empty() {
+        return;
+    }
+    
+    let mut player = player_query.single_mut();
+
+    if mouse_button_input.pressed(MouseButton::Left) {
+        player.attacks = true;
+    }
+
     if !mouse_button_input.pressed(MouseButton::Left) || gun_query.is_empty() {
+        player.attacks = false;
         return;
     }
 

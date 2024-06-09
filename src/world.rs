@@ -39,7 +39,9 @@ fn init_world(
                 .with_translation(vec3(200., 0., 1.)),
             ..default()
         },
-        Player,
+        Player {
+            attacks: false,
+        },
         Health(PLAYER_HEALTH),
         GoldCount(0.),
         PlayerState::default(),
@@ -50,10 +52,15 @@ fn init_world(
     commands.spawn((
         SpriteSheetBundle {
             texture: handle.gun_image.clone().unwrap(),
-            transform: Transform::from_scale(Vec3::splat(0.4)),
+            atlas: TextureAtlas {
+                layout: handle.gun_layout.clone().unwrap(),
+                index: 0,
+            },
+            transform: Transform::from_scale(Vec3::splat(CURSOR_SPRITE_SCALE_FACTOR)),
             ..default()
         },
         Gun,
+        AnimationTimer(Timer::from_seconds(0.013, TimerMode::Repeating)),
         GunTimer(Stopwatch::new()),
         GameEntity,
     ));

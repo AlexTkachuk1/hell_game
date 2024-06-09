@@ -104,22 +104,6 @@ fn despawn_dead_enemies(
     }
 }
 
-// fn update_enemy_transform(
-//     player_query: Query<&Transform, With<Player>>,
-//     mut enemy_query: Query<&mut Transform, (With<Enemy>, Without<Player>)>,
-// ) {
-//       if enemy_query.is_empty() || player_query.is_empty() {
-//           return;
-//       }
-
-//       let player_pos = player_query.single().translation;
-//       for mut transform in enemy_query.iter_mut() {
-//             let dir = (player_pos - transform.translation).normalize();
-//             transform.translation += dir * ENEMY_SPEED;
-
-//       }
-// }
-
 fn update_enemy_transform(
     player_query: Query<&Transform, With<Player>>,
     castle_query: Query<&Transform, With<Castle>>,

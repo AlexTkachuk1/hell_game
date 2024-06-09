@@ -18,8 +18,6 @@ pub const PLAYER_TILE_H: usize = 268;
 pub const PLAYER_SPRITE_SHEET_W: usize = 6;
 pub const PLAYER_SPRITE_SHEET_H: usize = 4;
 
-pub const GUN_SPRITE_PATH: &str = "gun.png";
-
 pub const COIN_SPRITE_SHEET_PATH: &str = "coin.png";
 pub const COIN_SPRITE_SCALE_FACTOR: f32 = 0.15;
 pub const COIN_TILE_W: usize = 188;
@@ -52,8 +50,14 @@ pub const BULLET_SPAWN_INTERVAL: f32 = 0.1;
 pub const BULLET_SPEED: f32 = 20.0;
 pub const BULLET_DAMAGE: f32 = 15.0;
 pub const BULLET_TIME_SECS: f32 = 1.;
-
 pub const NUM_BULLETS_PER_SHOT: usize = 10;
+
+pub const GUN_SPRITE_SHEET_PATH: &str = "gun.png";
+pub const GUN_SPRITE_SCALE_FACTOR: f32 = 1.0;
+pub const GUN_TILE_W: usize = 201;
+pub const GUN_TILE_H: usize = 142;
+pub const GUN_SPRITE_SHEET_W: usize = 9;
+pub const GUN_SPRITE_SHEET_H: usize = 3;
 
 //Menu
 pub const MENU_SPRITE_SHEET_PATH: &str = "bg.png";

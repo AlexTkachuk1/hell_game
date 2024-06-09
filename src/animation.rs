@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    castle::Castle, enemy::{Enemy, EnemyType}, gold::Gold, gui::MenuBG, gun::Gun, player::{Player, PlayerState}, CursorPosition
+    castle::Castle, enemy::{Enemy, EnemyType}, gold::Gold, gui::MenuBG, gun::Gun, player::{self, Player, PlayerState}, CursorPosition
 };
 use crate::state::GameState;
 
@@ -29,6 +29,7 @@ impl Plugin for AnimationPlugin {
                 animate_enemy,
                 animate_gold,
                 animate_castle,
+                animate_gun,
                 flip_gun_sprite_y,
                 flip_player_sprite_x,
                 flip_enemy_sprite_x,
@@ -103,6 +104,26 @@ fn animate_castle(
         if timer.just_finished() {
             atlas.index = (atlas.index + 1) % 28;
         }
+    }
+}
+
+fn animate_gun(
+    mut gun_query: Query<(&mut TextureAtlas, &AnimationTimer), With<Gun>>,
+    player_query: Query<&Player, With<Player>>
+) {
+    if gun_query.is_empty() {
+        return;
+    }
+
+    let (mut atlas, timer) = gun_query.single_mut();
+    let player = player_query.single();
+
+    if !player.attacks {
+        return;
+    }
+
+    if timer.just_finished() {
+        atlas.index = (atlas.index + 1) % 26;
     }
 }
 

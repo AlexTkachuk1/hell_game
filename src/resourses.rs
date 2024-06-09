@@ -12,6 +12,7 @@ pub struct GlobalTextureAtlas {
     pub image: Option<Handle<Image>>,
     pub player_layout: Option<Handle<TextureAtlasLayout>>,
     pub player_image: Option<Handle<Image>>,
+    pub gun_layout: Option<Handle<TextureAtlasLayout>>,
     pub gun_image: Option<Handle<Image>>,
     pub coin_layout: Option<Handle<TextureAtlasLayout>>,
     pub coin_image: Option<Handle<Image>>,
@@ -66,8 +67,6 @@ fn load_assets(
         None,
     );
     handle.player_layout = Some(texture_atlas_layouts.add(player_layout));
-
-    handle.gun_image = Some(asset_server.load(GUN_SPRITE_PATH));
 
     handle.coin_image = Some(asset_server.load(COIN_SPRITE_SHEET_PATH));
 
@@ -124,6 +123,17 @@ fn load_assets(
     );
     handle.castle_layout = Some(texture_atlas_layouts.add(castle_layout));
 
+    handle.gun_image = Some(asset_server.load(GUN_SPRITE_SHEET_PATH));
+
+    let gun_layout = TextureAtlasLayout::from_grid(
+        Vec2::new(GUN_TILE_W as f32, GUN_TILE_H as f32),
+        GUN_SPRITE_SHEET_W,
+        GUN_SPRITE_SHEET_H,
+        None,
+        None,
+    );
+    handle.gun_layout = Some(texture_atlas_layouts.add(gun_layout));
+
     next_state.set(GameState::MainMenu);
 }
 
@@ -152,6 +162,7 @@ impl Default for GlobalTextureAtlas {
             player_layout: None,
             player_image: None,
             gun_image: None,
+            gun_layout: None,
             coin_layout: None,
             coin_image: None,
             menu_layout: None,
